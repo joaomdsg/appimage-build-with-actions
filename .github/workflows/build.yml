@@ -54,7 +54,7 @@ jobs:
           ./appimagetool-x86_64.AppImage appdir flask-hello.AppImage
 
       - name: Upload AppImage
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: flask-hello-appimage
           path: flask-hello.AppImage
