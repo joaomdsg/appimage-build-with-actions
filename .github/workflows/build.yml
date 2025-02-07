@@ -33,11 +33,20 @@ jobs:
 
       - name: Create AppImage structure
         run: |
+          # Debug Python paths
+          echo "Python location: $(which python3.8)"
+          python3 -c "import sys; print(sys.prefix)"
+          
+          # Create directory structure
           mkdir -p appdir/usr/{bin,lib,share/applications,share/icons/hicolor/256x256/apps}
-          # Copy Python and its dependencies
+          
+          # Copy Python and dependencies using correct paths
           cp $(which python3.8) appdir/usr/bin/
-          cp -r /usr/lib/python3.8 appdir/usr/lib/
+          cp -r $(python3 -c "import sys; print(sys.prefix)")/lib/python3.8 appdir/usr/lib/
+          
+          # Install dependencies directly to AppDir
           python3 -m pip install --target=appdir/usr/lib/python3.8/site-packages -r requirements.txt
+          
           # Copy application files
           cp src/hello.py appdir/usr/bin/
           cp appimage/AppRun appdir/

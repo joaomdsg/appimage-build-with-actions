@@ -4,10 +4,21 @@ set -e
 # Get the directory where AppRun is located
 HERE="$(dirname "$(readlink -f "${0}")")"
 
+# Debug information
+echo "AppDir location: ${HERE}"
+echo "Python binary: ${HERE}/usr/bin/python3.8"
+echo "Application: ${HERE}/usr/bin/hello.py"
+
 # Set up Python environment
 export PYTHONHOME="${HERE}/usr"
 export PYTHONPATH="${HERE}/usr/lib/python3.8:${HERE}/usr/lib/python3.8/site-packages:${PYTHONPATH}"
 export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
+
+# Required for Flask
+export FLASK_APP="${HERE}/usr/bin/hello.py"
+export FLASK_ENV="production"
+export HOST="0.0.0.0"
+export PORT="8090"
 
 # Execute the Python application
 exec "${HERE}/usr/bin/python3.8" "${HERE}/usr/bin/hello.py"
