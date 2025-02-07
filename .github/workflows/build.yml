@@ -44,6 +44,8 @@ jobs:
         run: |
           sudo apt-get install -y imagemagick
           convert -size 256x256 xc:white -font DejaVu-Sans -pointsize 24 -fill black -gravity center -draw "text 0,0 'Flask\nHello'" appdir/usr/share/icons/hicolor/256x256/apps/flask-hello.png
+          # Copy icon to AppDir root
+          cp appdir/usr/share/icons/hicolor/256x256/apps/flask-hello.png appdir/flask-hello.png
 
       - name: Create desktop entry
         run: |
