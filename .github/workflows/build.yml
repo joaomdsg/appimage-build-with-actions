@@ -1,0 +1,40 @@
+name: Build AppImage
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create AppImage
+        run: |
+          mkdir -p appdir/usr/bin
+          cp $(which python3.8) appdir/usr/bin/
+          cp -r $(python3.8 -m site --user-site)/* appdir/usr/bin/
+          cp appimage/AppRun appdir/
+          cp src/hello.py appdir/usr/bin/
+          chmod +x appdir/AppRun
+          appimagetool appdir my-python-app.AppImage
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v2
+        with:
+          name: hello-appimage
+          path: my-python-app.AppImage
