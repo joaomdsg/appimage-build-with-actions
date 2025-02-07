@@ -13,6 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Install AppImage tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfuse2
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -22,19 +29,32 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pyinstaller
 
-      - name: Create AppImage
+      - name: Create AppImage structure
         run: |
-          mkdir -p appdir/usr/bin
+          mkdir -p appdir/usr/{bin,lib,share/applications,share/icons/hicolor/256x256/apps}
           cp $(which python3.8) appdir/usr/bin/
-          cp -r $(python3.8 -m site --user-site)/* appdir/usr/bin/
-          cp appimage/AppRun appdir/
+          python3 -m pip install --target=appdir/usr/lib/python3.8/site-packages -r requirements.txt
           cp src/hello.py appdir/usr/bin/
+          cp appimage/AppRun appdir/
           chmod +x appdir/AppRun
-          appimagetool appdir my-python-app.AppImage
+
+      - name: Create desktop entry
+        run: |
+          echo "[Desktop Entry]
+          Name=Flask Hello World
+          Exec=AppRun
+          Icon=flask-hello
+          Type=Application
+          Categories=Development;" > appdir/flask-hello.desktop
+
+      - name: Build AppImage
+        run: |
+          ./appimagetool-x86_64.AppImage appdir flask-hello.AppImage
 
       - name: Upload AppImage
         uses: actions/upload-artifact@v2
         with:
-          name: hello-appimage
-          path: my-python-app.AppImage
+          name: flask-hello-appimage
+          path: flask-hello.AppImage
