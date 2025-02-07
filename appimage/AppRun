@@ -1,5 +1,13 @@
-
 #!/bin/bash
+set -e
+
+# Get the directory where AppRun is located
 HERE="$(dirname "$(readlink -f "${0}")")"
-export PYTHONPATH="${HERE}/usr/lib/python3.8/site-packages:${PYTHONPATH}"
+
+# Set up Python environment
+export PYTHONHOME="${HERE}/usr"
+export PYTHONPATH="${HERE}/usr/lib/python3.8:${HERE}/usr/lib/python3.8/site-packages:${PYTHONPATH}"
+export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
+
+# Execute the Python application
 exec "${HERE}/usr/bin/python3.8" "${HERE}/usr/bin/hello.py"

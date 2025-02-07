@@ -34,11 +34,14 @@ jobs:
       - name: Create AppImage structure
         run: |
           mkdir -p appdir/usr/{bin,lib,share/applications,share/icons/hicolor/256x256/apps}
+          # Copy Python and its dependencies
           cp $(which python3.8) appdir/usr/bin/
+          cp -r /usr/lib/python3.8 appdir/usr/lib/
           python3 -m pip install --target=appdir/usr/lib/python3.8/site-packages -r requirements.txt
+          # Copy application files
           cp src/hello.py appdir/usr/bin/
           cp appimage/AppRun appdir/
-          chmod +x appdir/AppRun
+          chmod +x appdir/AppRun appdir/usr/bin/python3.8
 
       - name: Create icon
         run: |
