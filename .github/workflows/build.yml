@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install AppImage tools
         run: |
@@ -21,7 +21,7 @@ jobs:
           chmod +x appimagetool-x86_64.AppImage
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.8'
 
@@ -39,6 +39,11 @@ jobs:
           cp src/hello.py appdir/usr/bin/
           cp appimage/AppRun appdir/
           chmod +x appdir/AppRun
+
+      - name: Create icon
+        run: |
+          sudo apt-get install -y imagemagick
+          convert -size 256x256 xc:white -font DejaVu-Sans -pointsize 24 -fill black -gravity center -draw "text 0,0 'Flask\nHello'" appdir/usr/share/icons/hicolor/256x256/apps/flask-hello.png
 
       - name: Create desktop entry
         run: |
